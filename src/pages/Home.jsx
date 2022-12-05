@@ -15,11 +15,7 @@ function Home() {
       <p className="mt-5" align="middle">
       Connect Your Wallet
       </p>
-      <div className="mt-5">
-        <Link to="/styleguide" className="btn btn-primary">
-          Connect
-        </Link>
-      </div>
+     
     </div>
   );
 }
