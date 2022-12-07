@@ -3,6 +3,7 @@ import useProvider from '../../hooks/useProvider';
 
 function Header() {
   const provider = useProvider();
+
 console.log(provider);
   return (
     <div className="header-wrapper">
@@ -10,7 +11,7 @@ console.log(provider);
         <div className="container">
           
           <div className="d-flex justify-content-between align-items-center">
-            <a class="btn btn-primary m-1" href="/" role="button">Home</a>
+            <a class="btn btn-primary m-1" href="/home" role="button">Home</a>
             <a class="btn btn-primary m-1" href="/mint" role="button">Mint</a>
             <a class="btn btn-primary m-1" href="/collection" role="button">Collection</a>
             <a class="btn btn-primary m-1" href="/profile" role="button">Profile</a>   
