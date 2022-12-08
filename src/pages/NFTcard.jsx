@@ -11,6 +11,7 @@ import Button from '../components/ui/Button';
 import { useEffect, useState, useCallback} from 'react';
 import useProvider from '../hooks/useProvider';
 import axios from "axios";
+import CardActions from '@mui/material/CardActions';
 
 function NFTcard (data) {
     const providerData = useProvider();
@@ -142,14 +143,48 @@ function NFTcard (data) {
         setIsLoading(false);
     }
 
-    return (
-      <Card sx={{ maxWidth: 345 }} className="nft-card">
-        <CardActionArea>
+     return (             
+         <Card sx={{ maxWidth: 200 }} className="nft-card" align="middle">
+             
+            <CardMedia
+                component="img"
+                height="200"
+                image={imageUrl} 
+                alt=""/>
 
-     </CardActionArea>
+            <h5>{ collectionName} </h5>
+            <p align="middle">{ description} </p>
+            <p align="middle">Owner: {owner.slice(0, 5) + " .. " + owner.slice(owner.length-3)} </p>
+
+           
+            {!isApproved ? 
+              <Button loading={isApproveLoading} onClick={handleApproveButtonClick} type="primary">
+                      Approve
+              </Button> : null}
+           
+            <CardActions >
+               
+            <Button loading={isBuyLoading} onClick={handleBuyButtonClick} type="primary" >
+               Buy    
+            </Button>
+            <p className="mx-4 my-2 text-center" style={{ color: `blue` }  } >
+            { 
+               ethers.utils.formatEther(priceNft) 
+            }</p>        
+           </CardActions>
+           <Button loading={isLoading} onClick={handleSellButtonClick} type="primary">
+               Sell
+           </Button>     
+        </Card>      
+    );
+}
+   /*  return (
+      
+      <Card sx={{ maxWidth: 345 }} className="nft-card">
+    
         <CardActionArea > 
          
-           <CardContent>
+           <CardContent align="middle">
              <CardMedia
                component="img"
                height="170"
@@ -161,10 +196,9 @@ function NFTcard (data) {
                <Typography gutterBottom variant="h7" component="div" className="nft-card-description">
               { description}
               </Typography>
-             <Typography variant="body2" color="text.secondary" className="nft-card-owner">
-               Owner: {owner}
-             </Typography>
-           
+             <Typography color="text.secondary" className="nft-card-owner" >
+               Owner: {owner.slice(0, 5) + " .. " + owner.slice(owner.length-3)}
+             </Typography>           
               
            </CardContent>
 
@@ -181,14 +215,15 @@ function NFTcard (data) {
               Buy    
            </Button>
          </div>
-         <div className="col-12 col-md-2">
+         <div className="col-12 col-md-2" >
            <p className="mx-4 my-2 text-center" style={{ color: `blue` }  } >
-            { 
-            priceNft
-            }
+           { 
+             ethers.utils.formatEther(priceNft) 
+           }
            </p> 
          </div>
       </div>
+
 
       <div className="button-wrapper mt-1" align="middle">
         <Button loading={isLoading} onClick={handleSellButtonClick} type="primary">
@@ -199,5 +234,5 @@ function NFTcard (data) {
       </Card>
     )
 }
-
+ */
 export default NFTcard;

@@ -30,6 +30,7 @@ function Collection() {
       const tx = await contract.createCollection(collectionName);
       await tx.wait();
       
+      resetForm();
     } catch (e) {
       console.log('e', e);
     } finally {
@@ -48,6 +49,11 @@ function Collection() {
       setContract(_contract);
     }
   }, [providerData]);
+
+   const resetForm = async () => {
+    setCollectionName('');
+    setDescription('');
+  }
 
   return (
     <div className="container my-5">
