@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import { useEffect, useState, useCallback} from 'react';
 import useProvider from '../hooks/useProvider';
 import walletABI from '../sdk/artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json';
-import walletMarketItemABI from '../sdk/artifacts/contracts/MarketItem.sol/MarketItem.json';
 import Button from '../components/ui/Button';
 import { NFTStorage } from 'nft.storage'
 

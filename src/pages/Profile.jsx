@@ -3,14 +3,16 @@ import { ethers } from 'ethers';
 import { useEffect, useState, useCallback} from 'react';
 import useProvider from '../hooks/useProvider';
 import walletABI from '../sdk/artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json';
+import walletMarketItemABI from '../sdk/artifacts/contracts/MarketItem.sol/MarketItem.json';
 import { Grid} from "@mui/material";
 import NFTcard from "./NFTcard";
 
 
 function Profile() {
+   const [contract, setContract] = useState();
+   const [contractMarketItem, setContractMarketItem] = useState();
    const [isLoading, setIsLoading] = useState(false);
    const providerData = useProvider();
-   const [contract, setContract] = useState();
    const [data, setNft] = useState([]);
 
    useEffect(() => {
@@ -25,6 +27,20 @@ function Profile() {
     }
   }, [providerData]);
 
+  
+   useEffect(() => {
+    if (providerData) {
+      const _contract = new ethers.Contract(
+        '0x47c7e68b9407ffd609ef56C4Dd1472304c3C6a95',
+        walletMarketItemABI.abi,
+        providerData.signer,
+      );
+
+      setContractMarketItem(_contract);
+    }
+   }, [providerData]);
+
+
    const getNFTData = useCallback(async () => {
       setIsLoading(true);
       const result = await contract.getNftIdsCount();  
@@ -34,13 +50,17 @@ function Profile() {
       for (let i = 0; i < nftCount; i++) {
      
          const currentNFT = await contract.nftLedger(i);
-     
+         const ownerAddress = await contractMarketItem.ownerOf( Number(currentNFT.tokenId));
+
+         console.log('', ownerAddress);
+         if (ownerAddress == providerData.signerData.userAddress){
          nft.push({
            tokenId: Number(currentNFT.tokenId),
            collectionId: Number(currentNFT.collectionId),
            price: currentNFT.price,
            forSale: currentNFT.forSale 
          }); 
+        }
       }
 
      setNft(nft);
