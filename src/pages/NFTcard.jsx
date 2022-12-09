@@ -23,9 +23,12 @@ function NFTcard (data) {
     const [collectionName, setCollectionName] = useState('');
     const [description, setDescription] = useState('');
     const [isApproved, setIsApproved] = useState(false);
+    const [isForSale, setIsForSale] = useState(false);
+    const [priceForSale, setPriceForSale] = useState('200000000000000');
     const [imageUrl, setImageUrl] = useState('');
     const [priceNft, setPriceNft] = useState( 200000000000000 );
     const [owner, setOwner] = useState('');
+    const emptyPrice = !(priceForSale.length > 0);
 
     useEffect(() => {
     if (providerData) {
@@ -96,8 +99,7 @@ function NFTcard (data) {
       imageFromJson = imageFromJson.replace("ipfs://","");
 
       const imageUrl = "https://dweb.link/ipfs/" + imageFromJson;
-
-      console.log('getImage', imageFromJson);
+ 
       setImageUrl(imageUrl);
       setIsLoading(false);  
   
@@ -121,34 +123,50 @@ function NFTcard (data) {
          contract && getIsApproval();
      }, [contract, providerData, getIsApproval]);    
 
+     const getPrice = useCallback(async () => {      
+        setIsForSale((data.data.forSale));
+     
+     }, [contract, providerData]);
+
+     useEffect(() => {
+         contract && getPrice();
+     }, [contract, providerData, getPrice]);   
+
      const handleApproveButtonClick = async () => {
         setIsApproveLoading(true);      
     
         await contractMarketItem.approve(contract.address, data.data.tokenId);       
-        setIsApproveLoading(false);
-        setPriceNft(ethers.utils.parseEther(200000000000000));
-        await contract.listItem(data.data.tokenId, 200000000000000);
+        setIsApproveLoading(false);      
     }
 
-     const handleBuyButtonClick = async () => {
+    const handleBuyButtonClick = async () => {
         setIsBuyLoading(true);
-        //await contract.connect("0x47c7e68b9407ffd609ef56C4Dd1472304c3C6a97").buyItem(data.data.tokenId);
-        await contract.buyItem(data.data.tokenId);
+         await contract.buyItem(data.data.tokenId);
         setIsBuyLoading(false);
     }
 
-      const handleSellButtonClick = async () => {
-        console.log('handleSellButtonClick ===== ');
-        setIsLoading(true);
-        setIsLoading(false);
+    const handleSellButtonClick = async () => {
+        console.log('priceForSale ===',priceForSale);
+        
+        await contract.listItem(data.data.tokenId, priceForSale);
+    }
+    
+    const handlePriceInput = e => {
+       setPriceForSale(e.target.value);
+    };
+
+    const handleSetPriceInput = async () => {
+        console.log('priceForSale ===',priceForSale);
+        
+       // await contract.listItem(data.data.tokenId, priceForSale);
     }
 
      return (             
-         <Card sx={{ maxWidth: 200 }} className="nft-card" align="middle">
+         <Card sx={{ maxWidth: 300 }} className="nft-card" align="middle">
              
             <CardMedia
                 component="img"
-                height="200"
+                height="300"
                 image={imageUrl} 
                 alt=""/>
 
@@ -169,12 +187,28 @@ function NFTcard (data) {
             </Button>
             <p className="mx-4 my-2 text-center" style={{ color: `blue` }  } >
             { 
-               ethers.utils.formatEther(priceNft) 
+               ethers.utils.formatEther(priceNft) + " eth"
             }</p>        
            </CardActions>
+           <CardActions>
+           {!isForSale ? 
            <Button loading={isLoading} onClick={handleSellButtonClick} type="primary">
                Sell
-           </Button>     
+           </Button> : null}  
+            <div align="middle">
+            <input
+                className="form-control mt-2"
+                onChange={handlePriceInput}
+                value={priceForSale}
+                type="text"      
+                style={{ height: '34px', width:'160px', lineHeight: '34px', borderRadius: '2px' }}   
+          />  
+      </div>
+           <Button loading={isLoading} onClick={handleSetPriceInput} type="primary">
+               Set
+           </Button>   
+        </CardActions> 
+          {emptyPrice ? <div style={{ color: `blue` }}>Price is required</div> : null}  
         </Card>      
     );
 }
