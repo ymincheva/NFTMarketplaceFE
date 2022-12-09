@@ -3,10 +3,7 @@ import { ethers } from 'ethers';
 import walletABI from '../sdk/artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json';
 import walletMarketItemABI from '../sdk/artifacts/contracts/MarketItem.sol/MarketItem.json';
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
-import { CardActionArea } from '@mui/material';
 import Button from '../components/ui/Button';
 import { useEffect, useState, useCallback} from 'react';
 import useProvider from '../hooks/useProvider';
@@ -24,11 +21,11 @@ function NFTcard (data) {
     const [description, setDescription] = useState('');
     const [isApproved, setIsApproved] = useState(false);
     const [isForSale, setIsForSale] = useState(false);
-    const [priceForSale, setPriceForSale] = useState('200000000000000');
+    const [inputPrice, setInputPrice] = useState(false);
+    const [priceForSale, setPriceForSale] = useState(2000000000000);
     const [imageUrl, setImageUrl] = useState('');
-    const [priceNft, setPriceNft] = useState( 200000000000000 );
     const [owner, setOwner] = useState('');
-    const emptyPrice = !(priceForSale.length > 0);
+    const emptyPrice = !(priceForSale > 0);
 
     useEffect(() => {
     if (providerData) {
@@ -141,24 +138,24 @@ function NFTcard (data) {
 
     const handleBuyButtonClick = async () => {
         setIsBuyLoading(true);
-         await contract.buyItem(data.data.tokenId);
+        await contract.buyItem(data.data.tokenId);
         setIsBuyLoading(false);
     }
 
     const handleSellButtonClick = async () => {
-        console.log('priceForSale ===',priceForSale);
-        
-        await contract.listItem(data.data.tokenId, priceForSale);
+        setInputPrice(true);
     }
     
     const handlePriceInput = e => {
-       setPriceForSale(e.target.value);
+        setPriceForSale(e.target.value);
     };
 
     const handleSetPriceInput = async () => {
-        console.log('priceForSale ===',priceForSale);
+        console.log('priceForSale ===',(priceForSale>0));
         
-       // await contract.listItem(data.data.tokenId, priceForSale);
+        if (priceForSale>0){
+        await contract.listItem(data.data.tokenId, priceForSale);
+        }
     }
 
      return (             
@@ -167,6 +164,7 @@ function NFTcard (data) {
             <CardMedia
                 component="img"
                 height="300"
+                width="290"
                 image={imageUrl} 
                 alt=""/>
 
@@ -187,7 +185,7 @@ function NFTcard (data) {
             </Button>
             <p className="mx-4 my-2 text-center" style={{ color: `blue` }  } >
             { 
-               ethers.utils.formatEther(priceNft) + " eth"
+               ethers.utils.formatEther(priceForSale) + " eth"
             }</p>        
            </CardActions>
            <CardActions>
@@ -195,18 +193,23 @@ function NFTcard (data) {
            <Button loading={isLoading} onClick={handleSellButtonClick} type="primary">
                Sell
            </Button> : null}  
-            <div align="middle">
-            <input
-                className="form-control mt-2"
-                onChange={handlePriceInput}
-                value={priceForSale}
-                type="text"      
-                style={{ height: '34px', width:'160px', lineHeight: '34px', borderRadius: '2px' }}   
-          />  
-      </div>
+       
+           <div align="middle" >
+           {inputPrice ?
+           <input
+               className="form-control mt-2 mx-4 "
+               onChange={handlePriceInput}
+               value={priceForSale}
+               type="text"      
+               style={{ height: '34px', width:'140px', lineHeight: '34px', borderRadius: '2px' }}   
+            /> :null } 
+           </div>
+           {inputPrice ?
            <Button loading={isLoading} onClick={handleSetPriceInput} type="primary">
                Set
-           </Button>   
+           </Button> 
+           :null }  
+         
         </CardActions> 
           {emptyPrice ? <div style={{ color: `blue` }}>Price is required</div> : null}  
         </Card>      
