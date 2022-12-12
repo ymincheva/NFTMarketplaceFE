@@ -12,16 +12,17 @@ function Mint() {
 
   const [nameItem, setName]  =  useState('Name');
   const [description, setDescription]  =  useState('Description');
-  const [fileToUpload, setFileToUpload]  =  useState('Choose file to upload');
   const [collection, setCollection] = useState([]);
   const [collectionSelection, setCollectionSelection] = useState(0);
+
   const [isLoading, setIsLoading] = useState(false);
   const [imageNFT, setImageNFT] = useState('');
   const [nftStorageUrl, setNftStorageUrl] = useState('');
 
-  const { NFTStorage, File, Blob } = require('nft.storage')
+  const { NFTStorage } = require('nft.storage')
   const NFT_STORAGE_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDJBNkU0MjBiMTZmNEEzOTRjNjk1OTRBNWZBMTUwNzIzQzk2RUMxZjgiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2ODE1NTcxNTI4NSwibmFtZSI6IllhbmthIE1pbmNoZXZhIn0.ITH3LE5Guopkl7CL4chTk70OM85geV_aGxhLKOxHlAw'
   const client = new NFTStorage({ token: NFT_STORAGE_TOKEN })
+  const emptyNftUrl = (nftStorageUrl.length > 0);
 
   const handleNameInput = e => {
     setName(e.target.value);
@@ -31,32 +32,24 @@ function Mint() {
     setDescription(e.target.value);
   };
 
-  const handleCollectionInput = e => {
-    setCollectionSelection(e.target.value);
+  const handleCollectionInput = e => {  
+    setCollectionSelection((Number(e.target.value)+1));
   };
 
- /*  const handleFileToUploadInput = e => {
-    setFileToUpload(e.target.value);
-  }; */
-
-/*   const submitStateResults = async () => {
-
-  };    */
-
   const handleMintButtonClick = async () => {
-    console.log('collectionSelection ===== ',collectionSelection);
-    console.log('nftStorageUrl ===== ',nftStorageUrl);
-    setIsLoading(true);
+   setIsLoading(true);
 
-    try {
-      const tx = await contract.createMarketItem(collectionSelection, nftStorageUrl);
-      await tx.wait();
-      
+   try {
+      if (emptyNftUrl) {        
+        const tx = await contract.createMarketItem(collectionSelection, nftStorageUrl);
+        await tx.wait();
+        resetForm();
+      }
     } catch (e) {
       console.log('e', e);
     } finally {
       setIsLoading(false);
-    }
+    } 
   };
 
   useEffect(() => {
@@ -98,18 +91,25 @@ function Mint() {
             name: nameItem,
             description: description,
             image: imageNFT
-             }) 
-       console.log('metadata ===== ',metadata.url);  
+             })   
+       console.log('metadata.url ==== ',metadata.url);
+
        setNftStorageUrl(metadata.url);
     }
 
-    const handleFileInput = (e) => {
-      console.log('file ',e.target.files[0]);
-     // var tmppath = URL.createObjectURL(e.target.files[0]); 
-      setImageNFT(e.target.files[0]);   
+    const handleFileInput = (e) => {   
+       setImageNFT(e.target.files[0]);   
     } 
 
-   return (
+    const resetForm = async () => {
+      setName('Name');
+      setDescription('Description');
+      setNftStorageUrl(''); 
+      setCollectionSelection(0);
+      document.getElementById('nftImage').value = "";
+    };
+
+    return (
     <div className="container my-5">
       <h1  align="middle">Mint</h1>   
      
@@ -161,6 +161,7 @@ function Mint() {
          <Button loading={isLoading} onClick={handleMintButtonClick} type="primary">
              Mint
          </Button>
+         {!emptyNftUrl ? <div style={{ color: `blue` }}>Please wait to upload file</div> : null}  
       </div> 
     </div>
   );

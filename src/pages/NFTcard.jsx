@@ -22,7 +22,7 @@ function NFTcard (data) {
     const [isApproved, setIsApproved] = useState(false);
     const [isForSale, setIsForSale] = useState(false);
     const [inputPrice, setInputPrice] = useState(false);
-    const [priceForSale, setPriceForSale] = useState(2000000000000);
+    const [priceForSale, setPriceForSale] = useState(0);
     const [imageUrl, setImageUrl] = useState('');
     const [owner, setOwner] = useState('');
     const emptyPrice = !(priceForSale > 0);
@@ -75,6 +75,7 @@ function NFTcard (data) {
       setIsLoading(true);
    
       const currentCollection = await contract.collectionLedger(data.data.collectionId);
+  
       setCollectionName(currentCollection);
       setIsLoading(false);
      }, [contract, providerData]);
@@ -150,9 +151,7 @@ function NFTcard (data) {
         setPriceForSale(e.target.value);
     };
 
-    const handleSetPriceInput = async () => {
-        console.log('priceForSale ===',(priceForSale>0));
-        
+    const handleSetPriceInput = async () => {        
         if (priceForSale>0){
         await contract.listItem(data.data.tokenId, priceForSale);
         }
@@ -180,13 +179,13 @@ function NFTcard (data) {
            
             <CardActions >
                
-            <Button loading={isBuyLoading} onClick={handleBuyButtonClick} type="primary" >
+           {!emptyPrice? <Button loading={isBuyLoading} onClick={handleBuyButtonClick} type="primary" >
                Buy    
-            </Button>
-            <p className="mx-4 my-2 text-center" style={{ color: `blue` }  } >
+            </Button>:null}
+           {!emptyPrice?  <p className="mx-4 my-2 text-center" style={{ color: `blue` }  } >
             { 
                ethers.utils.formatEther(priceForSale) + " eth"
-            }</p>        
+            }</p>:null}    
            </CardActions>
            <CardActions>
            {!isForSale ? 
