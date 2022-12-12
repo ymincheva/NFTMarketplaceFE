@@ -47,12 +47,15 @@ function Profile() {
       const nftCount = Number(result);
       const nft = [];
 
-      for (let i = 0; i < nftCount; i++) {
+      for (let i = 9; i < nftCount; i++) {
      
         const currentNFT = await contract.nftLedger(i);
         const ownerAddress = await contractMarketItem.ownerOf( Number(currentNFT.tokenId));
 
          if (ownerAddress == providerData.signerData.userAddress){
+         console.log('price ====== ',currentNFT.price);
+         console.log('token ====== ',Number(currentNFT.tokenId));
+         console.log('forsale ====== ',currentNFT.forSale );
          nft.push({
            tokenId: Number(currentNFT.tokenId),
            collectionId: Number(currentNFT.collectionId),

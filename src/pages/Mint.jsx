@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback} from 'react';
 import useProvider from '../hooks/useProvider';
 import walletABI from '../sdk/artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json';
 import Button from '../components/ui/Button';
-import { NFTStorage } from 'nft.storage'
 
 function Mint() {
   const providerData = useProvider();
@@ -22,7 +21,7 @@ function Mint() {
   const { NFTStorage } = require('nft.storage')
   const NFT_STORAGE_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDJBNkU0MjBiMTZmNEEzOTRjNjk1OTRBNWZBMTUwNzIzQzk2RUMxZjgiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY2ODE1NTcxNTI4NSwibmFtZSI6IllhbmthIE1pbmNoZXZhIn0.ITH3LE5Guopkl7CL4chTk70OM85geV_aGxhLKOxHlAw'
   const client = new NFTStorage({ token: NFT_STORAGE_TOKEN })
-  const emptyNftUrl = (nftStorageUrl.length > 0);
+  const emptyNftUrl = (nftStorageUrl.length == 0);
 
   const handleNameInput = e => {
     setName(e.target.value);
@@ -40,7 +39,7 @@ function Mint() {
    setIsLoading(true);
 
    try {
-      if (emptyNftUrl) {        
+      if (!emptyNftUrl) {        
         const tx = await contract.createMarketItem(collectionSelection, nftStorageUrl);
         await tx.wait();
         resetForm();
@@ -161,7 +160,7 @@ function Mint() {
          <Button loading={isLoading} onClick={handleMintButtonClick} type="primary">
              Mint
          </Button>
-         {!emptyNftUrl ? <div style={{ color: `blue` }}>Please wait to upload file</div> : null}  
+         {emptyNftUrl ? <div style={{ color: `blue` }}>Please wait to upload file</div> : null}  
       </div> 
     </div>
   );
