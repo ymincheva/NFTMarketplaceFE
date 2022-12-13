@@ -26,8 +26,7 @@ function NFTcard (data) {
     const [priceForSale, setPriceForSale] = useState(0);
     const [imageUrl, setImageUrl] = useState('');
     const [owner, setOwner] = useState('');
-
-    const emptyPrice = (priceForSale == 0);
+  
     const emptyInputPrice = (inputPrice == 0);
 
     useEffect(() => {
@@ -129,7 +128,8 @@ function NFTcard (data) {
      }, [contract, providerData, getIsApproval]);    
 
      /* -------------- getIsForSale ---------------- */
-     const getIsForSale = useCallback(async () => {      
+     const getIsForSale = useCallback(async () => {  
+        
         setIsForSale((data.data.forSale));
      
      }, [contract, providerData]);
@@ -142,8 +142,8 @@ function NFTcard (data) {
     const getPrice = useCallback(async () => {
       setIsLoading(true);
    
-      const currentPrice = await contract.collectionLedger(data.data.price);
-    /*   console.log('currentPrice -----',currentPrice); */
+      const currentPrice = (data.data.price);
+      console.log('nftcard -----', currentPrice); 
 
       setPriceForSale(currentPrice);
       setIsLoading(false);
@@ -176,11 +176,16 @@ function NFTcard (data) {
     };
 
     const handleSetPriceInput = async () => {   
-         console.log('inputPrice -----', inputPrice);  
+     
          if (inputPrice > 0){
-               setIsLoading(true);
-           await contract.listItem(data.data.tokenId, inputPrice);
-              setIsLoading(false);
+           setIsLoading(true);
+           console.log('inputPrice -----', inputPrice);  
+           var utils = require('ethers').utils;
+           var wei = utils.parseEther(inputPrice);
+           console.log('wei========================',wei.toString(10));
+           await contract.listItem(data.data.tokenId, wei.toString(10));
+           
+           setIsLoading(false);
         } 
     }
 
@@ -206,17 +211,17 @@ function NFTcard (data) {
            
             <CardActions >
                
-           {!emptyPrice? <Button loading={isBuyLoading} onClick={handleBuyButtonClick} type="primary" >
+           {isForSale? <Button loading={isBuyLoading} onClick={handleBuyButtonClick} type="primary" >
                Buy    
            </Button>:null}
-           {!emptyPrice?  <p className="mx-4 my-2 text-center" style={{ color: `blue` }  } >
+           {isForSale?  <p className="mx-4 my-2 text-center" style={{ color: `blue` }  } >
             { 
-               ethers.utils.formatEther(priceForSale) + " eth"
+              priceForSale
             }</p>:null}    
 
            </CardActions>
            <CardActions>
-           {isApproved && emptyPrice ? 
+           {isApproved && !isForSale ? 
            <Button onClick={handleSellButtonClick} type="primary">
                Sell
            </Button> : null}  
@@ -238,7 +243,7 @@ function NFTcard (data) {
          :null }  
          
         </CardActions> 
-          {isForSale && emptyInputPrice ? <div style={{ color: `blue` }}>Price is required</div> : null}  
+          {!isForSale && emptyInputPrice && isApproved ? <div style={{ color: `blue` }}>Price is required</div> : null}  
         </Card>      
     );
 }

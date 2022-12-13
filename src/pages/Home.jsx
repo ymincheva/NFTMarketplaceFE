@@ -1,10 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { ethers } from 'ethers';
 import { useEffect, useState, useCallback} from 'react';
 import useProvider from '../hooks/useProvider';
 import walletABI from '../sdk/artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json';
-import { Grid} from "@mui/material";
+import { Grid } from "@mui/material";
 import NFTcard from "./NFTcard";
 
 function Home() {
@@ -32,15 +31,15 @@ function Home() {
       const nftCount = Number(result);
       const nft = [];
 
-      for (let i = 0; i < nftCount; i++) {
+      for (let i = 9; i < nftCount; i++) {
      
          const currentNFT = await contract.nftLedger(i);
      
-         nft.push({
-           tokenId: Number(currentNFT.tokenId),
-           collectionId: Number(currentNFT.collectionId),
-           price: currentNFT.price,
-           forSale: currentNFT.forSale 
+         nft.push({           
+            tokenId: Number(currentNFT.tokenId),
+            collectionId: Number(currentNFT.collectionId),
+            price: ethers.utils.formatEther(currentNFT.price),
+            forSale: currentNFT.forSale 
          }); 
       }
 

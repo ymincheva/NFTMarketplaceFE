@@ -7,7 +7,6 @@ import walletMarketItemABI from '../sdk/artifacts/contracts/MarketItem.sol/Marke
 import { Grid} from "@mui/material";
 import NFTcard from "./NFTcard";
 
-
 function Profile() {
    const [contract, setContract] = useState();
    const [contractMarketItem, setContractMarketItem] = useState();
@@ -49,19 +48,21 @@ function Profile() {
 
       for (let i = 9; i < nftCount; i++) {
      
-        const currentNFT = await contract.nftLedger(i);
-        const ownerAddress = await contractMarketItem.ownerOf( Number(currentNFT.tokenId));
-
+         const currentNFT = await contract.nftLedger(i);
+         const ownerAddress = await contractMarketItem.ownerOf( Number(currentNFT.tokenId));
+     
          if (ownerAddress == providerData.signerData.userAddress){
-         console.log('price ====== ',currentNFT.price);
-         console.log('token ====== ',Number(currentNFT.tokenId));
-         console.log('forsale ====== ',currentNFT.forSale );
-         nft.push({
-           tokenId: Number(currentNFT.tokenId),
-           collectionId: Number(currentNFT.collectionId),
-           price: currentNFT.price,
-           forSale: currentNFT.forSale 
-         }); 
+          const priceNft = currentNFT.price;
+
+          console.log('profile price ====== ', ethers.utils.formatEther(currentNFT.price)); 
+           
+          nft.push({
+            tokenId: Number(currentNFT.tokenId),
+            collectionId: Number(currentNFT.collectionId),
+            price: ethers.utils.formatEther(currentNFT.price),
+            forSale: currentNFT.forSale 
+          }); 
+
         }
       }
 
