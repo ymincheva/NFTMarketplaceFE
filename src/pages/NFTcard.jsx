@@ -158,13 +158,15 @@ function NFTcard (data) {
         setIsApproveLoading(true);      
     
         await contractMarketItem.approve(contract.address, data.data.tokenId);       
-        setIsApproveLoading(false);      
+        setIsApproveLoading(false);  
+        window.location.reload();    
     }
 
     const handleBuyButtonClick = async () => {
         setIsBuyLoading(true);
-        await contract.buyItem(data.data.tokenId);
+        await contract.buyItem(data.data.tokenId);       
         setIsBuyLoading(false);
+        window.location.reload();
     }
 
     const handleSellButtonClick = async () => {
@@ -179,13 +181,12 @@ function NFTcard (data) {
      
          if (inputPrice > 0){
            setIsLoading(true);
-           console.log('inputPrice -----', inputPrice);  
            var utils = require('ethers').utils;
            var wei = utils.parseEther(inputPrice);
-           console.log('wei========================',wei.toString(10));
            await contract.listItem(data.data.tokenId, wei.toString(10));
            
            setIsLoading(false);
+           window.location.reload()
         } 
     }
 
