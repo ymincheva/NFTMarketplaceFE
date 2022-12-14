@@ -179,7 +179,7 @@ function NFTcard (data) {
 
     const handleSetPriceInput = async () => {   
      
-         if (inputPrice > 0){
+        if (inputPrice > 0){
            setIsLoading(true);
            var utils = require('ethers').utils;
            var wei = utils.parseEther(inputPrice);

@@ -31,7 +31,7 @@ function Home() {
       const nftCount = Number(result);
       const nft = [];
 
-      for (let i = 9; i < nftCount; i++) {
+      for (let i = 6; i < nftCount; i++) {
      
          const currentNFT = await contract.nftLedger(i);
      

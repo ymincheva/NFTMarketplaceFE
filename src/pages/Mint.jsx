@@ -160,7 +160,7 @@ function Mint() {
          <Button loading={isLoading} onClick={handleMintButtonClick} type="primary">
              Mint
          </Button>
-         {emptyNftUrl ? <div style={{ color: `blue` }}>Please wait to upload file</div> : null}  
+         {emptyNftUrl ? <div style={{ color: `blue` }}>Please select a file and wait to upload</div> : null}  
       </div> 
     </div>
   );
