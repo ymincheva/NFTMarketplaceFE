@@ -2,35 +2,66 @@ import React from 'react';
 import { useState} from 'react';
 import Button from '../components/ui/Button';
 import useProvider from '../hooks/useProvider';
-import { injected } from "../hooks/connectors"
-import { useWeb3React } from "@web3-react/core";
+import walletConnectModule from "@web3-onboard/walletconnect";
+import injectedModule from "@web3-onboard/injected-wallets";
+import Onboard from "@web3-onboard/core";
 
 function Welcome() {
-  const { active, activate, deactivate } = useWeb3React()
-  const [isLoading, setIsLoading] = useState(false);
   const provider = useProvider();
 
-  async function connect() {
-    try {
-      await activate(injected)
-    } catch (ex) {
-      console.log(ex)
+  const walletConnect = walletConnectModule();
+  const injected = injectedModule();
+
+  const modules = [walletConnect, injected];
+  const MAINNET_RPC_URL = `https://sepolia.infura.io/v3/6b899e4d080d4b3e951c5a195baf298b`;
+
+  const [account, setAccount] = useState();
+  const [chainId, setChainId] = useState();
+
+  const onboard = Onboard({
+  wallets: modules, 
+  chains: [
+    {
+      id: "0x1", 
+      token: "ETH",
+      namespace: "evm",
+      label: "Ethereum Mainnet",
+      rpcUrl: MAINNET_RPC_URL
     }
+  ],
+  appMetadata: {
+    name: "My App",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg",
+    description: "My app using Onboard",
+    recommendedInjectedWallets: [ 
+      { name: "MetaMask", url: "https://metamask.io" }
+    ]
   }
+ });
 
-   async function disconnect() {
+   const connectWallet = async () => {
     try {
-      deactivate()
-    } catch (ex) {
-      console.log(ex)
+      const wallets = await onboard.connectWallet();
+      const { accounts, chains } = wallets[0];
+      setAccount(accounts[0].address);
+      setChainId(chains[0].id);
+    } catch (error) {
+      console.error(error);
     }
-  }
-  const handleConnectClick = async () => {
-    console.log('----- ', !provider.connected);
+  };
 
-// ethereum.request({ method: 'eth_requestAccounts' })
-   };
+   const disconnect = async () => {
+    const [primaryWallet] = await onboard.state.get().wallets;
+    if (primaryWallet) await onboard.disconnectWallet({ label: primaryWallet.label });
+    refreshState();
+  };
 
+  const refreshState = () => {
+    setAccount("");
+    setChainId("");
+  };
+  
    return (
     
     <div className="container my-5" >
@@ -40,19 +71,22 @@ function Welcome() {
         goodies.
       </p>
       <p className="mt-2" align="middle">
-       You can use this marketplace to create, buy & sell NFTs
+        You can use this marketplace to create, buy & sell NFTs
       </p>
       <p className="mt-10 fw-bold fs-2" align="middle">
        Connect Your Wallet
       </p>   
 
       <div className="button-wrapper mt-3" align="middle">
-        <Button loading={isLoading} onClick={connect} type="primary">
-             {!active ? <Button onClick={connect}>Connect</Button> : <Button onClick={connect}>Disconnect</Button>}
-        </Button>
-   
+          <Button onClick={connectWallet}>Connect Wallet</Button>  
       </div> 
-    
+      <div className="button-wrapper mt-3" align="middle">
+          <Button onClick={disconnect}>Disconnect</Button>
+      </div>
+      <div>Connection Status: ${!!account}</div>
+      <div>Wallet Address: ${account}</div>
+      <div>Network Chain ID: ${chainId}</div>
+        
     </div>   
   ); 
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import useProvider from '../../hooks/useProvider';
 
+
 function Header() {
   const provider = useProvider();
 
@@ -15,6 +16,7 @@ console.log(provider);
             <a class="btn btn-primary m-1" href="/mint" role="button">Mint</a>
             <a class="btn btn-primary m-1" href="/collection" role="button">Collection</a>
             <a class="btn btn-primary m-1" href="/profile" role="button">Profile</a>   
+
 
             <p>{provider ? <code>{provider.signerData.userAddress}</code> : 'Not connected'}</p>
           </div>
