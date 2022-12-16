@@ -41,7 +41,7 @@ function Collection() {
     useEffect(() => {
     if (providerData) {
       const _contract = new ethers.Contract(
-        '0x8b737597d6bc9C7e16D23B470D7ec4e42023f0F9',
+        '0x4bC61D6099CF269ece7d563bF8a103f48e622F6c',
         walletABI.abi,
         providerData.signer,
       );

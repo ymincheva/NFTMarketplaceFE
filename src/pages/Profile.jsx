@@ -17,7 +17,7 @@ function Profile() {
    useEffect(() => {
     if (providerData) {
       const _contract = new ethers.Contract(
-        '0x8b737597d6bc9C7e16D23B470D7ec4e42023f0F9',
+        '0x4bC61D6099CF269ece7d563bF8a103f48e622F6c',
         walletABI.abi,
         providerData.signer,
       );
@@ -30,7 +30,7 @@ function Profile() {
    useEffect(() => {
     if (providerData) {
       const _contract = new ethers.Contract(
-        '0x47c7e68b9407ffd609ef56C4Dd1472304c3C6a95',
+        '0x21F3D050238693A8DB90973BbEc5C705C6FC793A',
         walletMarketItemABI.abi,
         providerData.signer,
       );
@@ -46,16 +46,13 @@ function Profile() {
       const nftCount = Number(result);
       const nft = [];
 
-      for (let i = 9; i < nftCount; i++) {
+      for (let i = 0; i < nftCount; i++) {
      
          const currentNFT = await contract.nftLedger(i);
          const ownerAddress = await contractMarketItem.ownerOf( Number(currentNFT.tokenId));
      
          if (ownerAddress == providerData.signerData.userAddress){
-          const priceNft = currentNFT.price;
-
-          console.log('profile price ====== ', ethers.utils.formatEther(currentNFT.price)); 
-           
+          
           nft.push({
             tokenId: Number(currentNFT.tokenId),
             collectionId: Number(currentNFT.collectionId),

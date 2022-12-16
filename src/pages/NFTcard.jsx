@@ -27,12 +27,12 @@ function NFTcard (data) {
     const [imageUrl, setImageUrl] = useState('');
     const [owner, setOwner] = useState('');
   
-    const emptyInputPrice = (inputPrice == 0);
+    const emptyInputPrice = (inputPrice === 0);
 
     useEffect(() => {
     if (providerData) {
       const _contract = new ethers.Contract(
-        '0x8b737597d6bc9C7e16D23B470D7ec4e42023f0F9',
+        '0x4bC61D6099CF269ece7d563bF8a103f48e622F6c',
         walletABI.abi,
         providerData.signer,
       );
@@ -45,7 +45,7 @@ function NFTcard (data) {
 
     if (providerData) {
       const _contract = new ethers.Contract(
-        '0x47c7e68b9407ffd609ef56C4Dd1472304c3C6a95',
+        '0x21F3D050238693A8DB90973BbEc5C705C6FC793A',
         walletMarketItemABI.abi,
         providerData.signer,
       );
@@ -157,15 +157,26 @@ function NFTcard (data) {
      const handleApproveButtonClick = async () => {
         setIsApproveLoading(true);      
     
-        await contractMarketItem.approve(contract.address, data.data.tokenId);       
+        let transaction = await contractMarketItem.approve(contract.address, data.data.tokenId); 
+        await transaction.wait();      
         setIsApproveLoading(false);  
         window.location.reload();    
     }
 
     const handleBuyButtonClick = async () => {
         setIsBuyLoading(true);
-        await contract.buyItem(data.data.tokenId);       
-        setIsBuyLoading(false);
+        const salePrice = ethers.utils.parseUnits(priceForSale, 'ether');
+        
+        var utils = require('ethers').utils;
+        var priceWei = utils.parseEther(priceForSale);
+        console.log('salePrice  wei ===',priceWei.toString(10));
+        // create new account address 0x155A5A4F13bE9e31945b158D98D54F572e18C1d0
+       // let transaction = await contract.connect("0x155A5A4F13bE9e31945b158D98D54F572e18C1d0").buyItem(data.data.tokenId, {value:priceWei});       
+        let transaction = await contract.buyItem(data.data.tokenId, {value:priceWei});       
+      
+        await transaction.wait();
+
+       setIsBuyLoading(false);
         window.location.reload();
     }
 
@@ -183,10 +194,11 @@ function NFTcard (data) {
            setIsLoading(true);
            var utils = require('ethers').utils;
            var wei = utils.parseEther(inputPrice);
-           await contract.listItem(data.data.tokenId, wei.toString(10));
-           
-           setIsLoading(false);
-           window.location.reload()
+           let transaction = await contract.listItem(data.data.tokenId, wei.toString(10));
+           await transaction.wait();
+      
+           setIsLoading(false);   
+           window.location.reload();   
         } 
     }
 

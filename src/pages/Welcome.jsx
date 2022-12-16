@@ -1,13 +1,11 @@
 import React from 'react';
 import { useState} from 'react';
 import Button from '../components/ui/Button';
-import useProvider from '../hooks/useProvider';
 import walletConnectModule from "@web3-onboard/walletconnect";
 import injectedModule from "@web3-onboard/injected-wallets";
 import Onboard from "@web3-onboard/core";
 
 function Welcome() {
-  const provider = useProvider();
 
   const walletConnect = walletConnectModule();
   const injected = injectedModule();
