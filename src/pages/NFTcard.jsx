@@ -158,7 +158,8 @@ function NFTcard (data) {
         setIsApproveLoading(true);      
     
         let transaction = await contractMarketItem.approve(contract.address, data.data.tokenId); 
-        await transaction.wait();      
+        await transaction.wait();    
+          
         setIsApproveLoading(false);  
         window.location.reload();    
     }

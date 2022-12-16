@@ -1,11 +1,13 @@
 import React from 'react';
 import { useState} from 'react';
 import Button from '../components/ui/Button';
+import useProvider from '../hooks/useProvider';
 import walletConnectModule from "@web3-onboard/walletconnect";
 import injectedModule from "@web3-onboard/injected-wallets";
 import Onboard from "@web3-onboard/core";
 
 function Welcome() {
+  const provider = useProvider();
 
   const walletConnect = walletConnectModule();
   const injected = injectedModule();
@@ -44,6 +46,7 @@ function Welcome() {
       const { accounts, chains } = wallets[0];
       setAccount(accounts[0].address);
       setChainId(chains[0].id);
+      window.location.reload()
     } catch (error) {
       console.error(error);
     }
@@ -53,6 +56,7 @@ function Welcome() {
     const [primaryWallet] = await onboard.state.get().wallets;
     if (primaryWallet) await onboard.disconnectWallet({ label: primaryWallet.label });
     refreshState();
+    window.location.reload()
   };
 
   const refreshState = () => {
